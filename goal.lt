@@ -1,0 +1,23 @@
+#!runtime.py
+
+
+# The class +Message+ is used to represent the
+# abstract notion of a value that can be sent.
+# 
+# Actually, it's just a demo of the parser.
+class Message {
+- initialize {
+	@title = nil
+	@send = false
+}
+- title(value) {
+	@value = value
+}
+- send {
+	@sent = false
+}
+}
+
+msg = new Message
+title msg, "Hello, world!"
+send msg
