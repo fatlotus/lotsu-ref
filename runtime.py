@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
+import sys
 import threading
 
-state = State()
+state = None
 
 import parser
-parser.state = state
 
 class State(threading.local):
 	contexts = [ ]
@@ -26,14 +26,24 @@ class State(threading.local):
 		self.contexts[-1][1] += 1
 
 def main(argv):
+	global state
+	
+	state = State()
+	parser.state = state
+	
 	state.push(('(runtime)', 0))
 	
 	if len(argv) > 0:
-		filename = argv.shift()
+		filename = argv.pop(0)
 		sys.stdin = open(filename, 'r')
 	else:
 		filename = '(stdin)'
 	
-	
+	parser._r()
+	state.tok = parser.next_token()
+	parser.stmts()
 	
 	state.pop()
+
+if __name__ == "__main__":
+	sys.exit(main(sys.argv[1:]))
