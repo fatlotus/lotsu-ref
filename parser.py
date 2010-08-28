@@ -32,11 +32,44 @@ def next_token():
 		else:
 			return ("unknown", state.r)
 
-def stmt():
-	tok = next_token()
+def _expect(*types):
+	tok = state.tok
 	
-	if tok[0] == 'name':
+	index = types.index(tok[0])
+	
+	if index == None:
+		if len(types) > 1:
+			joined = ', '.join(types[:-1]) + ' or ' + types[-1]
+		else:
+			joined = types[0]
+		raise SyntaxError("unexpected %s, expecting %s." % (tok[0], joined))
+	
+	return (index, tok)
+
+def _exp(*types):
+	got, tok = _expect()
+	
+	state.tok = tok
+	
+	return (got, tok)
+
+def block():
+	next_token()
+
+def stmt():
+	got, tok = _expect('name')
+	
+	if got == 0:
 		if tok[1] == 'class': # check for keywords
-			pass
+			got, tok = _expect('name')
+			
+			class_name = tok[1]
+			
+			got, tok = _expect('{')
 		else: # method call
-			pass
+			method_name = tok[1]
+			
+			
+			expr()
+			
+			
